@@ -50,6 +50,7 @@
         <div class="event-date"></div>
       </div>
       <div class="events"></div>
+
       <div class="add-event-wrapper">
         <div class="add-event-header">
           <div class="title">Добавить событие</div>
@@ -70,6 +71,28 @@
           <button class="add-event-btn">Добавить</button>
         </div>
       </div>
+
+      <div class="edit-event-wrapper">
+        <div class="edit-event-header">
+          <div class="title">Изменить событие</div>
+          <i class="fas fa-times edit-close"></i>
+        </div>
+        <div class="edit-event-body">
+          <div class="edit-event-input">
+            <input type="text" placeholder="Событие" class="event-name">
+          </div>
+          <div class="edit-event-input">
+            <input type="text" placeholder="Время от" class="event-time-from">
+          </div>
+          <div class="edit-event-input">
+            <input type="text" placeholder="Время до" class="event-time-to">
+          </div>
+        </div>
+        <div class="edit-event-footer">
+          <button class="edit-event-btn">Изменить</button>
+        </div>
+      </div>
+
     </div>
     <button class="add-event">
       <i class="fas fa-plus"></i>
@@ -78,7 +101,7 @@
 
 
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 
 </html>

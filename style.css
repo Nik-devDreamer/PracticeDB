@@ -42,6 +42,7 @@ body{
   background-color: #ffffff;
 }
 .calendar .month{
+  position: absolute;
   width: 100%;
   height: 150px;
   display: flex;
@@ -62,7 +63,8 @@ body{
 }
 .calendar .weekdays{
   width: 100%;
-  height: 100px;
+  height: 50px;
+  margin-top: 150px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -89,7 +91,7 @@ body{
   margin-bottom: 20px;
 }.calendar .days .day {
   width: 14.28%;
-  height: 90px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -278,7 +280,7 @@ body{
   color: #aaa;
   margin-left: 18px;
 }
-.events .event::after {
+.events .event .event-delete::after{
   content: "🗑️";
   position: absolute;
   display: none;
@@ -292,7 +294,22 @@ body{
   opacity: 0.3;
   color: #fff;
 }
-.events .event:hover::after {
+.events .event .event-edit::after{
+  content: "📝";
+  position: absolute;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+  top: 50%;
+  right: 50px;
+  font-size: 1.5rem;
+  line-height: 1;
+  opacity: 0.3;
+  color: #fff;
+}
+.events .event:hover .event-delete::after,
+.events .event:hover .event-edit::after{
   display: flex;
 }
 .events .no-event {
@@ -305,7 +322,8 @@ body{
   justify-content: center;
   color: #878895;
 }
-.add-event-wrapper {
+.add-event-wrapper,
+.edit-event-wrapper{
   position: absolute;
   background-color: #fff;
   overflow: hidden;
@@ -318,11 +336,13 @@ body{
   opacity: 0;
   transition: max-height 0.6s ease-in-out, opacity 0.5s ease-in-out;
 }
-.add-event-wrapper.active {
+.add-event-wrapper.active,
+.edit-event-wrapper.active {
   max-height: 300px;
   opacity: 1;
 }
-.add-event-header {
+.add-event-header,
+.edit-event-header {
   width: 100%;
   height: 50px;
   padding: 0 20px;
@@ -332,15 +352,18 @@ body{
   color: #2e2e2e;
   border-bottom: 1px solid #f5f5f5;
 }
-.add-event-header .close {
+.add-event-header .close,
+.edit-event-header .edit-close {
   font-size: 1.2rem;
   cursor: pointer;
 }
-.add-event-header .title {
+.add-event-header .title,
+.edit-event-header .title {
   font-size: 1.2rem;
   font-weight: 500;
 }
-.add-event-body {
+.add-event-body,
+.edit-event-body {
   width: 100%;
   height: 100%;
   gap: 5px;
@@ -348,7 +371,8 @@ body{
   display: flex;
   flex-direction: column;
 }
-.add-event-body .add-event-input {
+.add-event-body .add-event-input,
+.edit-event-body .edit-event-input {
   width: 100%;
   height: 40px;
   gap: 10px;
@@ -356,7 +380,8 @@ body{
   align-items: center;
   justify-content: space-between;
 }
-.add-event-body .add-event-input input {
+.add-event-body .add-event-input input,
+.edit-event-body .edit-event-input input {
   width: 100%;
   height: 100%;
   outline: none;
@@ -367,22 +392,27 @@ body{
   color: #2e2e2e;
   border-bottom: 1px solid #f5f5f5;
 }
-.add-event-body .add-event-input input::placeholder {
+.add-event-body .add-event-input input::placeholder,
+.edit-event-body .edit-event-input input::placeholder {
   color: #8a8a8a;
 }
-.add-event-body .add-event-input input:focus {
+.add-event-body .add-event-input input:focus,
+.edit-event-body .edit-event-input input:focus {
   border-bottom: 1px solid var(--primary-clr);
 }
-.add-event-body .add-event-input input:focus::placeholder {
+.add-event-body .add-event-input input:focus::placeholder,
+.edit-event-body .edit-event-input input:focus::placeholder {
   color: var(--primary-clr);
 }
-.add-event-footer {
+.add-event-footer,
+.edit-event-footer {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
-.add-event-footer .add-event-btn {
+.add-event-footer .add-event-btn,
+.edit-event-footer .edit-event-btn {
   height: 40px;
   font-size: 1rem;
   font-weight: 500;
@@ -395,7 +425,8 @@ body{
   background-color: var(--primary-clr);
   border: 1px solid var(--primary-clr);
 }
-.add-event-footer .add-event-btn:hover {
+.add-event-footer .add-event-btn:hover,
+.edit-event-footer .edit-event-btn:hover {
   background-color: transparent;
   color: var(--primary-clr);
 }
@@ -416,7 +447,7 @@ body{
   background-color: transparent;
   cursor: pointer;
 }
-.add-event:hover {
+.add-event:hover{
   opacity: 1;
 }
 .add-event i {

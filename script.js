@@ -8,15 +8,18 @@ const calendar = document.querySelector(".calendar"),
   gotoBtn = document.querySelector(".goto-btn"),
   dateInput = document.querySelector(".date-input"),
   addEventBtn = document.querySelector(".add-event"),
-  addEventWrapper = document.querySelector(".add-event-wrapper "),
-  addEventCloseBtn = document.querySelector(".close "),
-  addEventTitle = document.querySelector(".event-name "),
-  addEventFrom = document.querySelector(".event-time-from "),
-  addEventTo = document.querySelector(".event-time-to "),
+  addEventWrapper = document.querySelector(".add-event-wrapper"),
+  editEventWrapper = document.querySelector(".edit-event-wrapper"),
+  addEventCloseBtn = document.querySelector(".close"),
+  editEventCloseBtn = document.querySelector(".edit-close"),
+  addEventTitle = document.querySelector(".event-name"),
+  addEventFrom = document.querySelector(".event-time-from"),
+  addEventTo = document.querySelector(".event-time-to"),
   eventDay = document.querySelector(".event-day"),
   eventDate = document.querySelector(".event-date"),
   eventsContainer = document.querySelector(".events"),
-  addEventSubmit = document.querySelector(".add-event-btn ");
+  addEventSubmit = document.querySelector(".add-event-btn"),
+  editEventSubmit = document.querySelector(".edit-event-btn");
 
 // Переменные хранят информацию о текущей дате, месяце и выбранном дне
 let today = new Date();
@@ -89,18 +92,18 @@ function Calendar() {
       updateEvents(i);
       // Если событие найдено, также добавляем класс события
       // добавляем active на сегодня при запуске
-      if(event){
+      if (event) {
         days += `<div class="day today active event">${i}</div>`;
       }
-      else{
+      else {
         days += `<div class="day today active">${i}</div>`;
       }
     }
     else {
-      if(event){
+      if (event) {
         days += `<div class="day event">${i}</div>`;
       }
-      else{
+      else {
         days += `<div class="day">${i}</div>`;
       }
     }
@@ -192,9 +195,34 @@ addEventCloseBtn.addEventListener("click", () => {
   addEventWrapper.classList.remove("active");
 });
 
+let currentTitle = "";
+eventsContainer.addEventListener("click", (e) => {
+  if (e.target.classList.contains("event-edit")) {
+    // Находим родительский элемент с классом "event"
+    const eventEl = e.target.closest(".event");
+    // Находим заголовок и время выбранного события
+    const titleEl = eventEl.querySelector(".event-title");
+    const timeEl = eventEl.querySelector(".event-time");
+    const timeArr = timeEl.textContent.split(" - ");
+    const timeFrom = timeArr[0].trim();
+    const timeTo = timeArr[1].trim();
+    // Заполняем поля формы данными из выбранного события
+    editEventWrapper.querySelector(".event-name").value = titleEl.textContent;
+    editEventWrapper.querySelector(".event-time-from").value = timeFrom;
+    editEventWrapper.querySelector(".event-time-to").value = timeTo;
+    // Сохраняем заголовок выбранного события в глобальной переменной
+    currentTitle = titleEl.textContent;
+    editEventWrapper.classList.toggle("active");
+  }
+});
+
+editEventCloseBtn.addEventListener("click", () => {
+  editEventWrapper.classList.remove("active");
+});
+
 // Данная функция используется для скрытия элемента при клике вне этого элемента или его дочерних элементов
 document.addEventListener("click", (e) => {
-  if (e.target !== addEventBtn && !addEventWrapper.contains(e.target)) {
+  if (e.target != addEventBtn && !addEventWrapper.contains(e.target)) {
     addEventWrapper.classList.remove("active");
   }
 });
@@ -295,7 +323,7 @@ function getActiveDay(date) {
   const dayName = day.toString().split(" ")[0];
   eventDay.innerHTML = dayName;
   eventDate.innerHTML = date + " " + months[month] + " " + year;
-} 
+}
 
 // Функция используется для обновления событий на странице
 function updateEvents(date) {
@@ -308,7 +336,10 @@ function updateEvents(date) {
       year == event.year
     ) {
       event.events.forEach((event) => {
-        events += `<div class="event">
+        events += `
+        <div class="event">
+            <div class="event-delete"></div>
+            <div class="event-edit"></div>
             <div class="title">
               <i class="fas fa-circle"></i>
               <h2 class="event-title">${event.title}</h2>
@@ -419,7 +450,7 @@ addEventSubmit.addEventListener("click", () => {
   addEventFrom.value = "";
   addEventTo.value = "";
   updateEvents(activeDay);
-  
+
   // выберать активный день и добавить класс событий, если он не добавлен
   const activeDayEl = document.querySelector(".day.active");
   if (!activeDayEl.classList.contains("event")) {
@@ -427,11 +458,62 @@ addEventSubmit.addEventListener("click", () => {
   }
 });
 
-// Функция удаления события при нажатии на него
+// Функция для редактирования события
+editEventSubmit.addEventListener("click", () => {
+  const newTitle = editEventWrapper.querySelector(".event-name").value;
+  const newTimeFrom = editEventWrapper.querySelector(".event-time-from").value;
+  const newTimeTo = editEventWrapper.querySelector(".event-time-to").value;
+
+  // проверка правильного формата времени 24 часа
+  const timeFromArr = newTimeFrom.split(":");
+  const timeToArr = newTimeTo.split(":");
+  if (
+    timeFromArr.length != 2 ||
+    timeToArr.length != 2 ||
+    timeFromArr[0] > 23 ||
+    timeFromArr[1] > 59 ||
+    timeToArr[0] > 23 ||
+    timeToArr[1] > 59
+  ) {
+    alert("Неверный формат времени");
+    return;
+  }
+
+  // Находим редактируемое событие в массиве и изменяем его данные
+  eventsArr.forEach((event) => {
+    if (
+      event.day == activeDay &&
+      event.month == month + 1 &&
+      event.year == year
+    ) {
+      event.events.forEach((event) => {
+        if (event.title == currentTitle) {
+          event.title = newTitle;
+          event.time = `${newTimeFrom} - ${newTimeTo}`;
+          event.hoursFrom = newTimeFrom.slice(0, 2);
+          event.minFrom = newTimeFrom.slice(3, 5);
+          event.hoursTo = newTimeTo.slice(0, 2);
+          event.minTo = newTimeTo.slice(3, 5);
+        }
+      });
+    }
+  });
+
+  // Обновляем список событий на странице и очищаем поля формы
+  updateEvents(activeDay);
+  editEventWrapper.querySelector(".event-name").value = "";
+  editEventWrapper.querySelector(".event-time-from").value = "";
+  editEventWrapper.querySelector(".event-time-to").value = "";
+
+  // Закрываем форму для редактирования события
+  editEventWrapper.classList.remove("active");
+});
+
+// Функция удаления события при нажатии на значок корзины
 eventsContainer.addEventListener("click", (e) => {
-  if (e.target.classList.contains("event")) {
+  if (e.target.classList.contains("event-delete")) {
     if (confirm("Вы уверены, что хотите удалить это событие?")) {
-      const eventTitle = e.target.children[0].children[1].innerHTML;
+      const eventTitle = e.target.parentNode.querySelector(".event-title").innerHTML;
       eventsArr.forEach((event) => {
         if (
           event.day === activeDay &&
@@ -479,7 +561,7 @@ function getEvents() {
 
 // Интерфейс для отправки уведомлений
 class NotificationSender {
-  sendNotification(recipient, message) {}
+  sendNotification(recipient, message) { }
 }
 
 // Реализация интерфейса для отправки уведомлений по почте
@@ -501,9 +583,9 @@ class DateHelper {
   static isDateTimeTodayOrLater(dateTime) {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
-    if(today >= dateTime){
+    if (today >= dateTime) {
       return true;
-      }
+    }
   }
 }
 
