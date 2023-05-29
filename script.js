@@ -385,6 +385,12 @@ addEventSubmit.addEventListener("click", () => {
     return;
   }
 
+  // Проверка, что конечное время больше начального
+  if (eventTimeFrom >= eventTimeTo) {
+    alert("Конечное время должно быть больше начального");
+    return;
+  }
+
   const timeFrom = eventTimeFrom;
   const timeTo = eventTimeTo;
 
@@ -476,6 +482,12 @@ editEventSubmit.addEventListener("click", () => {
     timeToArr[1] > 59
   ) {
     alert("Неверный формат времени");
+    return;
+  }
+
+  // Проверка, что конечное время больше начального
+  if (newTimeFrom >= newTimeTo) {
+    alert("Конечное время должно быть больше начального");
     return;
   }
 
