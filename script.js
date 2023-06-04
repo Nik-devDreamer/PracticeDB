@@ -19,7 +19,8 @@ const calendar = document.querySelector(".calendar"),
   eventDate = document.querySelector(".event-date"),
   eventsContainer = document.querySelector(".events"),
   addEventSubmit = document.querySelector(".add-event-btn"),
-  editEventSubmit = document.querySelector(".edit-event-btn");
+  editEventSubmit = document.querySelector(".edit-event-btn"),
+  searchBtn = document.querySelector(".search-btn");
 
 // Переменные хранят информацию о текущей дате, месяце и выбранном дне
 let today = new Date();
@@ -358,6 +359,46 @@ function updateEvents(date) {
   }
   eventsContainer.innerHTML = events;
   saveEvents();
+}
+
+const currentDate = new Date();
+// Обработчик событий на кнопку "Ок" для поиска события
+searchBtn.addEventListener("click", () => {
+  const nameEventInput = document.querySelector(".name-event-input");
+  const name = nameEventInput.value.trim();
+  if (name) {
+    const filteredEvents = searchEventsByName(name);
+    eventsContainer.innerHTML = filteredEvents || 
+    `<div class="no-event">
+          <h2>Нет событий</h2>
+    </div>`;
+  } else {
+    updateEvents(currentDate.getDate());
+  }
+});
+
+// Функция поиска событий по названию
+function searchEventsByName(name) {
+  let filteredEvents = "";
+  eventsArr.forEach((event) => {
+    event.events.forEach((e) => {
+      if (e.title.toLowerCase() == name.toLowerCase()) {
+        filteredEvents += `
+        <div class="event">
+            <div class="event-delete"></div>
+            <div class="event-edit"></div>
+            <div class="title">
+              <i class="fas fa-circle"></i>
+              <h2 class="event-title">${e.title}</h2>
+            </div>
+            <div class="event-time">
+              <span class="event-time">${e.time}</span>
+            </div>
+        </div>`;
+      }
+    });
+  });
+  return filteredEvents;
 }
 
 // Функция для добавления события в eventsArr
