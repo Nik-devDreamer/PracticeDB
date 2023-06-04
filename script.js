@@ -361,19 +361,18 @@ function updateEvents(date) {
   saveEvents();
 }
 
-const currentDate = new Date();
 // Обработчик событий на кнопку "Ок" для поиска события
 searchBtn.addEventListener("click", () => {
   const nameEventInput = document.querySelector(".name-event-input");
   const name = nameEventInput.value.trim();
   if (name) {
     const filteredEvents = searchEventsByName(name);
-    eventsContainer.innerHTML = filteredEvents || 
-    `<div class="no-event">
+    eventsContainer.innerHTML = filteredEvents ||
+      `<div class="no-event">
           <h2>Нет событий</h2>
     </div>`;
   } else {
-    updateEvents(currentDate.getDate());
+    updateEvents(activeDay);
   }
 });
 
@@ -381,9 +380,14 @@ searchBtn.addEventListener("click", () => {
 function searchEventsByName(name) {
   let filteredEvents = "";
   eventsArr.forEach((event) => {
-    event.events.forEach((e) => {
-      if (e.title.toLowerCase() == name.toLowerCase()) {
-        filteredEvents += `
+    if (
+      event.day == activeDay &&
+      event.month == month + 1 &&
+      event.year == year
+    ) {
+      event.events.forEach((e) => {
+        if (e.title.toLowerCase() == name.toLowerCase()) {
+          filteredEvents += `
         <div class="event">
             <div class="event-delete"></div>
             <div class="event-edit"></div>
@@ -395,8 +399,9 @@ function searchEventsByName(name) {
               <span class="event-time">${e.time}</span>
             </div>
         </div>`;
-      }
-    });
+        }
+      });
+    }
   });
   return filteredEvents;
 }
