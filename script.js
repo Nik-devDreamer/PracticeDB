@@ -380,11 +380,6 @@ searchBtn.addEventListener("click", () => {
 function searchEventsByName(name) {
   let filteredEvents = "";
   eventsArr.forEach((event) => {
-    if (
-      event.day == activeDay &&
-      event.month == month + 1 &&
-      event.year == year
-    ) {
       event.events.forEach((e) => {
         if (e.title.toLowerCase() == name.toLowerCase()) {
           filteredEvents += `
@@ -396,12 +391,11 @@ function searchEventsByName(name) {
               <h2 class="event-title">${e.title}</h2>
             </div>
             <div class="event-time">
-              <span class="event-time">${e.time}</span>
+              <span class="event-time">${e.time} (${event.day}.${event.month}.${event.year})</span>
             </div>
         </div>`;
         }
       });
-    }
   });
   return filteredEvents;
 }
